@@ -1,68 +1,80 @@
 # COE4234: COMPUTER VISION AND PATTERN RECOGNITION
-## Mid-Term Assignment: Custom CNN for Object Classification
+## Mid-Term Assignment: Deep Learning for Object Classification
 
-### Student Information
-- **Student ID:** 22-47975-2
-- **Course Code:** COE4234
-- **Course Name:** COMPUTER VISION AND PATTERN RECOGNITION
-
----
-
-## 1. Project Overview
-This repository contains the complete implementation of a custom Convolutional Neural Network (CNN) using **PyTorch** to classify objects from the **CIFAR-100** dataset. As per the assignment requirements, the model focuses on a subset of 10 classes, evaluating the impact of regularization and advanced optimization techniques.
-
-### Selected Classes (Subset of CIFAR-100)
-- **Animals:** `bear`, `elephant`, `lion`, `tiger`, `wolf`
-- **Vehicles:** `bicycle`, `bus`, `motorcycle`, `pickup_truck`, `train`
+### Course Information
+*   **Course Code:** COE4234
+*   **Course Name:** COMPUTER VISION AND PATTERN RECOGNITION
+*   **Department:** Computer Science & Engineering
 
 ---
 
-## 2. Implementation Methodology
-
-### Data Preprocessing
-- **Normalization:** Calculated and applied mean/std normalization specific to the 10-class subset.
-- **Data Splitting:** Implemented a mandatory **10% Validation Split** from the training set.
-- **Batch Size:** 64.
-
-### Model Architecture
-The model follows a modular 3-block CNN design:
-1.  **Block 1:** Conv2D (3 -> 32 filters, 3x3), BatchNorm, ReLU, MaxPool2D, Dropout (0.3).
-2.  **Block 2:** Conv2D (32 -> 64 filters, 3x3), BatchNorm, ReLU, MaxPool2D, Dropout (0.3).
-3.  **Block 3:** Conv2D (64 -> 128 filters, 3x3), BatchNorm, ReLU, MaxPool2D, Dropout (0.3).
-4.  **Classification Head:** Global Average Pooling and Dense layers to map 128 channels to 10 classes.
-
-### Optimization & Training
-- **Optimizer:** Adam.
-- **Scheduler:** CosineAnnealingLR for smooth learning rate decay.
-- **Loss Function:** CrossEntropyLoss.
-- **Epochs:** 30.
+## 1. Executive Summary
+This project presents a specialized Convolutional Neural Network (CNN) architecture developed using **PyTorch** to solve a 10-class object recognition task on a subset of the **CIFAR-100** dataset. The model integrates modern deep learning components, including **Batch Normalization**, **Spatial Dropout**, and **Global Average Pooling**, achieving a robust test accuracy of **78.50%**.
 
 ---
 
-## 3. Results & Evaluation
-The model achieved a **Test Accuracy of 78.50%**.
+## 2. Dataset Specification
+The implementation utilizes a curated subset of the CIFAR-100 dataset, focusing on two distinct super-classes:
 
-### Key Performance Summary
-- **Macro F1-Score:** 77.85%
-- **Best Performing Class:** `motorcycle` (88.46% F1-score)
-- **Worst Performing Class:** `bus` (60.00% F1-score)
+| Category | Classes |
+| :--- | :--- |
+| **Animals** | `bear`, `elephant`, `lion`, `tiger`, `wolf` |
+| **Vehicles** | `bicycle`, `bus`, `motorcycle`, `pickup_truck`, `train` |
 
-### Visualizations Provided
-- **Training/Validation Curves:** Monitoring loss and accuracy over epochs.
-- **Ablation Study:** Comparative curves showing performance with and without Regularization (BN/Dropout).
-- **Confusion Matrix:** Detailed visualization of classification confusion between similar classes (e.g., Tiger vs. Wolf).
-- **Per-Class F1 Chart:** Bar chart representing model confidence across all 10 categories.
+### Data Pipeline
+*   **Preprocessing:** 32x32 resolution resizing, per-channel normalization (subset-specific mean/std).
+*   **Data Splitting:** A fixed-seed **10% Validation Split** (500 samples) was extracted from the 5,000-sample training subset to ensure reproducible hyperparameter tuning.
 
 ---
 
-## 4. Deliverables
-As specified in Section 5 of `CVPR_Mid.pdf`:
-1.  **`CNN_22-47975-2.ipynb`**: The complete Jupyter notebook with code, execution outputs, and visualizations.
-2.  **`CNN_22-47975-2.pth`**: The saved state dictionary of the final trained model.
+## 3. Technical Architecture
+The model features a modular **3-Block Convolutional** design with an increasing receptive field and channel depth:
+
+### Feature Extraction (Encoder)
+1.  **Block 1:** Conv2D (32 filters, 3x3) + BatchNorm + ReLU + MaxPool + Dropout(0.3)
+2.  **Block 2:** Conv2D (64 filters, 3x3) + BatchNorm + ReLU + MaxPool + Dropout(0.3)
+3.  **Block 3:** Conv2D (128 filters, 3x3) + BatchNorm + ReLU + MaxPool + Dropout(0.3)
+
+### Classification Head (Decoder)
+*   **Global Average Pooling:** Used to reduce spatial dimensions while preserving feature map activation intensity.
+*   **Dense Layers:** Fully connected layers with ReLU activation mapping to the final 10-class output.
 
 ---
 
-## 5. How to Run
-1.  Ensure you have `torch`, `torchvision`, `scikit-learn`, `matplotlib`, and `seaborn` installed.
-2.  Open `CNN_22-47975-2.ipynb` in Jupyter or Google Colab.
-3.  Run all cells; the CIFAR-100 dataset will be automatically downloaded to the `data_subset/` folder.
+## 4. Training Strategy & Optimization
+*   **Optimizer:** `Adam` (Adaptive Moment Estimation) for efficient gradient descent.
+*   **Learning Rate Policy:** `CosineAnnealingLR` scheduler to simulate warm restarts and prevent local minima entrapment.
+*   **Loss Criterion:** `CrossEntropyLoss` (Log-Softmax integrated) for multi-class optimization.
+*   **Batch Size:** 64 samples per iteration.
+
+---
+
+## 5. Performance Evaluation
+The model was rigorously evaluated across several metrics to ensure generalization:
+
+### Quantitative Results
+*   **Overall Test Accuracy:** 78.50%
+*   **Macro F1-Score:** 77.85%
+*   **Class-Specific Insights:**
+    *   **Highest Performance:** `motorcycle` (**88.46%** F1-score) — High geometric distinctness.
+    *   **Lowest Performance:** `bus` (**60.00%** F1-score) — Significant confusion with `train` due to similar structural aspect ratios.
+
+### Included Visualizations
+*   Learning Curves (Training vs. Validation Loss/Accuracy).
+*   **Ablation Study:** Validation of the positive impact of BatchNorm and Dropout on model convergence.
+*   **Confusion Matrix:** Heatmap analysis of inter-class misclassifications.
+*   **F1-Score Distribution:** Per-class performance bar chart.
+
+---
+
+## 6. Repository Deliverables
+In accordance with the assignment requirements, this repository contains:
+*   `CNN_22-47975-2.ipynb`: Complete source code, experimental outputs, and visualization suite.
+*   `CNN_22-47975-2.pth`: Serialized model state dictionary (weights) for deployment/verification.
+
+---
+
+## 7. Installation & Reproduction
+1.  Clone the repository and ensure the following dependencies are installed: `torch`, `torchvision`, `scikit-learn`, `matplotlib`, `seaborn`.
+2.  Execute the Jupyter Notebook `CNN_22-47975-2.ipynb`.
+3.  The dataset will be automatically downloaded and processed within the local environment.
